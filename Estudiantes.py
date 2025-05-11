@@ -59,7 +59,23 @@ class Graph:
 
     
     ########### Problema 2 ###########
-    def 
+    def matriz_de_transición_estocástica(self):
+        nodos = sorted(self.adyacencia.keys())
+        n = len(nodos)
+        idx = {nodo: i for i, nodo in enumerate(nodos)}
+        matriz = np.zeros((n, n))
+
+        for origen in nodos:
+            destinos = self.adyacencia[origen]
+            if destinos:
+                prob = 1 / len(destinos)
+                for destino in destinos:
+                    i = idx[origen]
+                    j = idx[destino]
+                    matriz[i][j] = prob
+            #si un nodo no tiene salidas, se deja la fila en cero
+
+        return nodos, matriz
 
 
 grafo_estudiantes = Graph()
