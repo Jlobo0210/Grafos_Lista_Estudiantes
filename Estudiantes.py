@@ -17,8 +17,8 @@ class Graph:
     def __init__(self, directed: bool = True):
         #self.n = n
         self.directed = True
-        self.adyacencia = {}  
-        self.adj_matrix = {}  
+        self.adyacencia = {} #Lista de adyacencia
+        self.adj_matrix = {} #Mat adyacencia  
         #self.edges = []  
 
     def add_vertex(self, u) -> None:
@@ -31,7 +31,6 @@ class Graph:
         self.add_vertex(destino)
         self.adyacencia[origen].append(destino)
         self.adj_matrix[(origen, destino)] = 1 
-
         return True
         pass
 
@@ -62,19 +61,16 @@ class Graph:
             
             x=new_x
             iteracion+=1
-        centralidad_estudiante=
+
             
             
-                
-            
-            
-            
+   
         pass
 
     
     ########### Problema 2 ###########
     
-    def matriz_de_transición_estocástica(self):
+    def matrizTransicionEstocastica(self):
         nodos = sorted(self.adyacencia.keys()) #nodos del dicc
         n = len(nodos)
         ind = {} #para luego construir la matriz, se une cada nodo con un indice del enumerate
@@ -85,13 +81,12 @@ class Graph:
 
         for origen in nodos:
             destinos = self.adyacencia[origen]
-            if destinos: #si tiene destinos, se calcula la prob, sino 
+            if destinos: #si tiene destinos, se calcula la prob, sino se quedan los 0
                 for destino in destinos:
-                    i = ind[origen]
-                    j = ind[destino]
-                    matriz[i][j] = 1/len(destinos) #mat estocástica
+                    i, j = ind[origen], ind[destino]
+                    matriz[i][j] = 1/len(destinos) #Mat estocástica
 
-        return nodos, matriz
+        return matriz
 
 
 grafo_estudiantes = Graph()
