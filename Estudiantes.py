@@ -53,27 +53,43 @@ class Graph:
         while iteracion < iteraciones_maximas and not converged:
             new_x=np.dot(self.adyacencia, x)
             normal=np.linalg.norm(new_x)
+            if normal > 0:
+                new_x= new_x/normal
+                
+            diferencia= np.linalg.norm(new_x-x)
+            if diferencia < tolerancia:
+                converged=True
+            
+            x=new_x
+            iteracion+=1
+        centralidad_estudiante=
+            
+            
+                
+            
             
             
         pass
 
     
     ########### Problema 2 ###########
+    
     def matriz_de_transición_estocástica(self):
-        nodos = sorted(self.adyacencia.keys())
+        nodos = sorted(self.adyacencia.keys()) #nodos del dicc
         n = len(nodos)
-        idx = {nodo: i for i, nodo in enumerate(nodos)}
+        ind = {} #para luego construir la matriz, se une cada nodo con un indice del enumerate
+        for i, nodo in enumerate(nodos):
+            ind[nodo] = i
+
         matriz = np.zeros((n, n))
 
         for origen in nodos:
             destinos = self.adyacencia[origen]
-            if destinos:
-                prob = 1 / len(destinos)
+            if destinos: #si tiene destinos, se calcula la prob, sino 
                 for destino in destinos:
-                    i = idx[origen]
-                    j = idx[destino]
-                    matriz[i][j] = prob
-            #si un nodo no tiene salidas, se deja la fila en cero
+                    i = ind[origen]
+                    j = ind[destino]
+                    matriz[i][j] = 1/len(destinos) #mat estocástica
 
         return nodos, matriz
 
