@@ -70,8 +70,7 @@ class Graph:
     
     ########### Problema 2 ###########
     
-    def matrizTransicionEstocastica(self):
-        nodos = sorted(self.adyacencia.keys()) #nodos del dicc
+    def matrizTransicionEstocastica(self, nodos): #cada fila indica las probabilidades de moverse de un estudiante a otro
         n = len(nodos)
         ind = {} #para luego construir la matriz, se une cada nodo con un indice del enumerate
         for i, nodo in enumerate(nodos):
@@ -88,10 +87,28 @@ class Graph:
 
         return matriz
 
+    def pagerank(self, nodos, iteraciones_maximas):
+        n = len(nodos)
+        M = self.matrizTransicionEstocastica(nodos)
+
+        PR = np.ones(n) / n  #se utiliza un vector de importancia inicial (1/n elementos), pagerank
+        teleport = np.ones(n) / n
+        iteracion = 0
+        
+        while iteracion < iteraciones_maximas:
+            PR = 0.85 * np.dot(M.T, PR) + (1 - 0.85) * teleport
+            iteracion += 1
+        
+        ranking = list(zip(nodos, PR)) #una lista de tuplas de estudiantes con su puntaje de pagerank
+        ranking.sort(key=lambda x: x[1], reverse=True) #reverse es que ordene de mayor a menor
+
+        return ranking
 
 grafo_estudiantes = Graph()
 for origen, destino in notes:
     grafo_estudiantes.add_edge(origen, destino)
+
+estudiantes = sorted(grafo_estudiantes.adyacencia.keys()) #nodos del dicc
 
 ############### TALLER ###############   
 
@@ -101,7 +118,7 @@ while opcion_menu != 3:
     print("|        Taller Alg. y Complejidad: Estudiante más famoso                |")
     print("|                                                                        |")
     print("|         1. Centralidad por Valores Propios 🌟                          |")
-    print("|         2. PageRank sobre la Red de Estudiantes                         |")
+    print("|         2. PageRank sobre la Red de Estudiantes 🔝                     |")
     print("|         3. Salida 🚪                                                   |")
     print("------------------------------------------------------------------------")
 
@@ -116,7 +133,12 @@ while opcion_menu != 3:
 
     elif opcion_menu == 2:
         print("\nHAZ ESCOGIDO LA OPCIÓN: PageRank sobre la Red de Estudiantes\n")
-       
+        ranking = grafo_estudiantes.pagerank(estudiantes, 5)
+
+        print("🔝 Ranking de estudiantes por PageRank:\n")
+        for i, (nombre, puntaje) in enumerate(ranking, 1):
+            print(f"{i}. {nombre}: {round(puntaje, 4)}")
+        print("\n")
     elif opcion_menu == 3:
         print("¡Gracias por usar el sistema! 👋")
 
