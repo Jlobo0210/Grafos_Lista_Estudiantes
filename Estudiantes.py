@@ -45,27 +45,45 @@ class Graph:
     ########### Problema 1 ###########
 
     def centralidadPorValoresPropios(self, iteraciones_maximas, tolerancia):
-        n=100
+        nodos = (self.adyacencia.keys())
+        n=len(nodos)
+        indices = {nodo: i for i, nodo in enumerate(nodos)}
+        #inicializamos la matriz de adyacencia
+        A = np.zeros((n, n))
+        for origen in nodos:
+            for destino in self.adyacencia[origen]:
+                i = indices[origen]
+                j = indices[destino]
+                A[i][j] = 1
+        
+        #inicialozamos el vector de centralidad, las iteraciones y la convergencia
         x=np.ones(n)/n
         iteracion=0
         converged=False
+        #iniciamos el bucle de iteraciones para calcular la centralidad teniendo en cuenta la tolerancia
         while iteracion < iteraciones_maximas and not converged:
-            new_x=np.dot(self.adyacencia, x)
+            new_x=np.dot(A, x)
             normal=np.linalg.norm(new_x)
+            
+            #normalizamos el vector
             if normal > 0:
                 new_x= new_x/normal
+            
                 
-            diferencia= np.linalg.norm(new_x-x)
-            if diferencia < tolerancia:
+            diferencia= np.linalg.norm(new_x-x) #calculamos la diferencia entre el nuevo vector y el anterior
+            if diferencia < tolerancia: # si la diferencia es menor a la tolerancia, se considera que ha convergido
                 converged=True
             
-            x=new_x
-            iteracion+=1
-
+            x=new_x #actualizamos el vector de centralidad
+            iteracion+=1 #aumentamos el contador de iteraciones
+            
+        centralidad = [(nodos[i], x[i]) for i in range(n)] #hacemos una tupla con el nombre del nodo y su centralidad
+        sorted_centralidad = sorted(centralidad, key=lambda x: x[1], reverse=True) #ordenamos la centralidad de mayor a menor
+        return x, iteracion, sorted_centralidad 
             
             
    
-        pass
+        
 
     
     ########### Problema 2 ###########
