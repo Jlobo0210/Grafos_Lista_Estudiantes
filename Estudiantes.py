@@ -2,14 +2,15 @@ import math
 import csv
 import os
 import numpy as np
+import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-ruta_estudiantes = os.path.join(base_dir, "lista_adyacencia_estudiantes.csv")
+ruta_estudiantes = os.path.join(base_dir, "matriz_adyacencia_estudiantes.xlsx")
 
-notes = ''
-with open(ruta_estudiantes, newline='') as listaAdyacencia:
-    data = csv.reader(listaAdyacencia, delimiter=',')
-    notes = list(data)
+df = pd.read_excel(ruta_estudiantes,index_col=0)
+
 
 ############### CLASE DEL GRAFO ###############    
 class Graph:
@@ -37,15 +38,48 @@ class Graph:
     def mostrar_lista(self):
         for nodo, vecinos in self.adyacencia.items():
             print(f"{nodo} -> {vecinos}")
+    
+    def mostrar_matriz(self):
+        nodos = sorted(self.adyacencia.keys())  # Asegura orden al imprimir
+        n = len(nodos)
+        indices = {nodo: i for i, nodo in enumerate(nodos)}
+
+        # Crear matriz n x n
+        matriz = [[0 for _ in range(n)] for _ in range(n)]
+
+        for origen in self.adyacencia:
+            for destino in self.adyacencia[origen]:
+                i = indices[origen]
+                j = indices[destino]
+                matriz[i][j] = 1
+
+        # Imprimir encabezado
+        print("\nMatriz de Adyacencia:")
+        print("     " + "  ".join(f"{nodo:>3}" for nodo in nodos))
+        for i, fila in enumerate(matriz):
+            print(f"{nodos[i]:>3}  " + "  ".join(str(valor) for valor in fila))
+
 
     def degree(self, u) -> int:
         return len(self.adyacencia[u])
         pass
+
+    def graficar_grafo(self):
+        G = nx.DiGraph()
+        for origen, vecinos in self.adyacencia.items():
+            for destino in vecinos:
+                G.add_edge(origen, destino)
+        
+        plt.figure(figsize=(10, 7))
+        pos = nx.spring_layout(G)
+        nx.draw(G, pos, with_labels=True, node_size=700, node_color='skyblue', edge_color='gray', arrows=True)
+        plt.title("Red de estudiantes")
+        plt.show()
     
     ########### Problema 1 ###########
 
     def centralidadPorValoresPropios(self, iteraciones_maximas, tolerancia):
-        nodos = (self.adyacencia.keys())
+        nodos = list(self.adyacencia.keys())
         n=len(nodos)
         indices = {nodo: i for i, nodo in enumerate(nodos)}
         #inicializamos la matriz de adyacencia
@@ -79,7 +113,7 @@ class Graph:
             
         centralidad = [(nodos[i], x[i]) for i in range(n)] #hacemos una tupla con el nombre del nodo y su centralidad
         sorted_centralidad = sorted(centralidad, key=lambda x: x[1], reverse=True) #ordenamos la centralidad de mayor a menor
-        return x, iteracion, sorted_centralidad 
+        return sorted_centralidad 
             
             
    
@@ -123,11 +157,15 @@ class Graph:
         return ranking
 
 grafo_estudiantes = Graph()
-for origen, destino in notes:
-    grafo_estudiantes.add_edge(origen, destino)
+for origen in df.index:
+    for destino in df.columns:
+        if df.loc[origen, destino] == 1:
+            grafo_estudiantes.add_edge(origen, destino)
 
 estudiantes = sorted(grafo_estudiantes.adyacencia.keys()) #nodos del dicc
 
+grafo_estudiantes.graficar_grafo()
+#grafo_estudiantes.mostrar_matriz()
 ############### TALLER ###############   
 
 opcion_menu = 0
@@ -148,7 +186,11 @@ while opcion_menu != 3:
 
     if opcion_menu == 1:
         print("\n✨ HAZ ESCOGIDO LA OPCIÓN: Centralidad por Valores Propios ✨\n")
-
+        ranking = grafo_estudiantes.centralidadPorValoresPropios(5, 10)
+        print("🔝 Ranking de estudiantes por Centralidad:\n")
+        for i, (nombre, puntaje) in enumerate(ranking, 1):
+            print(f"{i}. {nombre}: {round(puntaje, 4)}")
+        print("\n")
     elif opcion_menu == 2:
         print("\nHAZ ESCOGIDO LA OPCIÓN: PageRank sobre la Red de Estudiantes\n")
         ranking = grafo_estudiantes.pagerank(estudiantes, 5)
