@@ -70,11 +70,22 @@ class Graph:
             for destino in vecinos:
                 G.add_edge(origen, destino)
         
-        plt.figure(figsize=(10, 7))
-        pos = nx.spring_layout(G)
-        nx.draw(G, pos, with_labels=True, node_size=700, node_color='skyblue', edge_color='gray', arrows=True)
+        plt.figure(figsize=(12, 10))
+        pos = nx.shell_layout(G)
+        nx.draw(
+                G, pos, with_labels=True,
+                node_size=1000,
+                node_color='skyblue',
+                font_size=10,
+                arrows=True,
+                arrowsize=20,
+                edge_color='gray'
+            )
         plt.title("Red de estudiantes")
+        plt.tight_layout()
         plt.show()
+    
+    
     
     ########### Problema 1 ###########
 
@@ -164,24 +175,24 @@ for origen in df.index:
 
 estudiantes = sorted(grafo_estudiantes.adyacencia.keys()) #nodos del dicc
 
-grafo_estudiantes.graficar_grafo()
 #grafo_estudiantes.mostrar_matriz()
 ############### TALLER ###############   
 
 opcion_menu = 0
 while opcion_menu != 3:
     print("------------------------------------------------------------------------")
-    print("|        Taller Alg. y Complejidad: Estudiante más famoso                |")
-    print("|                                                                        |")
-    print("|         1. Centralidad por Valores Propios 🌟                          |")
-    print("|         2. PageRank sobre la Red de Estudiantes 🔝                     |")
-    print("|         3. Salida 🚪                                                   |")
+    print("|        Taller Alg. y Complejidad: Estudiante más famoso               |")
+    print("|                                                                      |")
+    print("|         1. Centralidad por Valores Propios 🌟                         |")
+    print("|         2. PageRank sobre la Red de Estudiantes 🔝                   |")
+    print("|         3. Visualizar el grafo con NetworkX 🧠                       |")
+    print("|         4. Salida 🚪                                                 |")
     print("------------------------------------------------------------------------")
 
     try:
-        opcion_menu = int(input("\nIngrese una opción (1-3): "))
+        opcion_menu = int(input("\nIngrese una opción (1-4): "))
     except ValueError:
-        print("⚠️ Entrada inválida. Por favor, ingrese un número entre 1 y 3.")
+        print("⚠️ Entrada inválida. Por favor, ingrese un número entre 1 y 4.")
         continue
 
     if opcion_menu == 1:
@@ -200,6 +211,10 @@ while opcion_menu != 3:
             print(f"{i}. {nombre}: {round(puntaje, 4)}")
         print("\n")
     elif opcion_menu == 3:
+        print("\n🎨 Visualizando el grafo con NetworkX...")
+        grafo_estudiantes.graficar_grafo()
+
+    elif opcion_menu == 4:
         print("¡Gracias por usar el sistema! 👋")
 
     else:
