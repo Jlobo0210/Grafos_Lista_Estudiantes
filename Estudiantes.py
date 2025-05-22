@@ -71,7 +71,7 @@ class Graph:
                 G.add_edge(origen, destino)
         
         plt.figure(figsize=(12, 10))
-        pos = nx.shell_layout(G)
+        pos = nx.circular_layout(G)
         nx.draw(
                 G, pos, with_labels=True,
                 node_size=1000,
@@ -197,7 +197,7 @@ while opcion_menu != 3:
 
     if opcion_menu == 1:
         print("\n✨ HAZ ESCOGIDO LA OPCIÓN: Centralidad por Valores Propios ✨\n")
-        ranking = grafo_estudiantes.centralidadPorValoresPropios(5, 10)
+        ranking = grafo_estudiantes.centralidadPorValoresPropios(100, 0.001)
         print("🔝 Ranking de estudiantes por Centralidad:\n")
         for i, (nombre, puntaje) in enumerate(ranking, 1):
             print(f"{i}. {nombre}: {round(puntaje, 4)}")
